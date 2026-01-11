@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"arb-hunter/internal/analyzer"
-	"arb-hunter/internal/exchange"
+	"github.com/safakferhatkaya/arb-hunter/internal/analyzer"
+	"github.com/safakferhatkaya/arb-hunter/internal/exchange"
 )
 
 func main() {

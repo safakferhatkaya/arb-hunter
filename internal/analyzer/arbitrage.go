@@ -1,7 +1,7 @@
 package analyzer
 
 import (
-	"arb-hunter/internal/exchange"
+	"github.com/safakferhatkaya/arb-hunter/internal/exchange"
 	"fmt"
 )
 
