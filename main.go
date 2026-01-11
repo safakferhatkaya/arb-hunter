@@ -3,9 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
+	"sync"
 	"time"
 )
 
@@ -79,7 +79,20 @@ func (c Coinbase) GetPrice(symbol string) (float64, error) {
 	return price, nil
 }
 
+// Struct to hold quote result
+type QuoteResult struct {
+	Exchange string
+	Price    float64
+	Error    error
+}
+
 func main() {
+	start := time.Now()
+
+	defer func() {
+		fmt.Printf("Elapsed time: %s\n", time.Since(start))
+	}()
+
 	exchanges := []Exchange{
 		Binance{},
 		Coinbase{},
@@ -89,21 +102,40 @@ func main() {
 	fmt.Printf("Searching prices for %s:\n", symbol)
 	fmt.Println("-----------------------")
 
-	start := time.Now()
+	results := make(chan QuoteResult, len(exchanges))
+	var wg sync.WaitGroup
 
-	defer func() {
-		elapsed := time.Since(start)
-		fmt.Printf("Elapsed time: %s\n", elapsed)
+	// Start a worker for each market
+	for _, ex := range exchanges {
+		wg.Add(1)
+
+		go func(e Exchange) {
+			defer wg.Done() // Works after current goroutine is done
+
+			price, err := e.GetPrice(symbol)
+
+			// Pass result into channel
+			results <- QuoteResult{
+				Exchange: e.Name(),
+				Price:    price,
+				Error:    err,
+			}
+		}(ex)
+	}
+
+	// Closer, take it as seperate goroutine to avoid blocking
+	go func() {
+		wg.Wait()      // Wait for all fetches to complete
+		close(results) // Close the channel
 	}()
 
-	// Todo : Implement concurrency for fetching prices
-	for _, ex := range exchanges {
-		price, err := ex.GetPrice(symbol)
-		if err != nil {
-			log.Println("Error:", err)
-			continue
+	// Consumer, until channel is closed, read results and prints
+	for res := range results {
+		if res.Error != nil {
+			fmt.Printf("[%s] Error fetching price: %v\n", res.Exchange, res.Error)
+		} else {
+			fmt.Printf("[%s] Price: $%.2f\n", res.Exchange, res.Price)
 		}
-		fmt.Printf("[%s] Price $%.2f\n", ex.Name(), price)
 	}
 
 	fmt.Println("-----------------------")
