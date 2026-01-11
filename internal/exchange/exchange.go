@@ -8,7 +8,7 @@ type Fetcher interface {
 	GetPrice(symbol string) (float64, error)
 }
 
-// acts as data transfer object, carries data accross channel
+// acts as data transfer object, carries data across channel
 type QuoteResult struct {
 	Exchange string
 	Price    float64

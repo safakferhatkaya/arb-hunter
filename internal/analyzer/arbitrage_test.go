@@ -1,8 +1,9 @@
 package analyzer
 
 import (
-	"github.com/safakferhatkaya/arb-hunter/internal/exchange"
 	"testing"
+
+	"github.com/safakferhatkaya/arb-hunter/internal/exchange"
 )
 
 func TestCalculate(t *testing.T) {

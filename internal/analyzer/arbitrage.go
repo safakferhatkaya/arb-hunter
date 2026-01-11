@@ -1,8 +1,9 @@
 package analyzer
 
 import (
-	"github.com/safakferhatkaya/arb-hunter/internal/exchange"
 	"fmt"
+
+	"github.com/safakferhatkaya/arb-hunter/internal/exchange"
 )
 
 type Report struct {

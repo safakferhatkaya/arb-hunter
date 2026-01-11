@@ -50,7 +50,7 @@ func main() {
 		}(ex)
 	}
 
-	// Closer, take it as seperate goroutine to avoid blocking
+	// Closer, take it as separate goroutine to avoid blocking
 	go func() {
 		wg.Wait()      // Wait for all fetches to complete
 		close(results) // Close the channel
