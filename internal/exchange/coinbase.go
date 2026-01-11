@@ -8,11 +8,17 @@ import (
 	"time"
 )
 
-type coinbase struct{}
+const defaultCoinbaseURL = "https://api.coinbase.com"
+
+type coinbase struct {
+	baseURL string
+}
 
 // Factory method
 func NewCoinbase() Fetcher {
-	return &coinbase{}
+	return &coinbase{
+		baseURL: defaultCoinbaseURL,
+	}
 }
 
 func (c *coinbase) Name() string { return "Coinbase" }
@@ -26,7 +32,7 @@ type coinbaseResponse struct {
 }
 
 func (c *coinbase) GetPrice(symbol string) (float64, error) {
-	url := fmt.Sprintf("https://api.coinbase.com/v2/prices/%s-USD/spot", symbol)
+	url := fmt.Sprintf("%s/v2/prices/%s-USD/spot", c.baseURL, symbol)
 	client := http.Client{Timeout: 10 * time.Second}
 	resp, err := client.Get(url)
 	if err != nil {

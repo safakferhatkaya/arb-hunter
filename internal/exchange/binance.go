@@ -8,11 +8,17 @@ import (
 	"time"
 )
 
+const baseBinanceURL = "https://api.binance.com"
+
 // binance is unexported (private)
-type binance struct{}
+type binance struct {
+	baseURL string
+}
 
 func NewBinance() Fetcher {
-	return &binance{}
+	return &binance{
+		baseURL: baseBinanceURL,
+	}
 }
 
 func (b *binance) Name() string { return "Binance" }
@@ -23,7 +29,7 @@ type binanceResponse struct {
 }
 
 func (b *binance) GetPrice(symbol string) (float64, error) {
-	url := fmt.Sprintf("https://api.binance.com/api/v3/ticker/price?symbol=%sUSDT", symbol)
+	url := fmt.Sprintf("%s/api/v3/ticker/price?symbol=%sUSDT", b.baseURL, symbol)
 	client := http.Client{Timeout: 10 * time.Second}
 	resp, err := client.Get(url)
 	if err != nil {
