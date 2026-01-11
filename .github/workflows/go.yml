@@ -1,7 +1,7 @@
 # This workflow will build a golang project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
 
-name: Go
+name: Go CI
 
 on:
   push:
@@ -19,10 +19,14 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
-        go-version: '1.20'
+        go-version: '1.24.4'
+        cache: true
 
-    - name: Build
+    - name: Verify Dependencies
+      run: go mod verify
+
+    - name: Run Tests
+      run: go test -v -race ./...
+
+    - name: Build Application
       run: go build -v ./...
-
-    - name: Test
-      run: go test -v ./...
