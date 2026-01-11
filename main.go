@@ -79,6 +79,13 @@ func (c Coinbase) GetPrice(symbol string) (float64, error) {
 	return price, nil
 }
 
+// Struct to hold quote result
+type QuoteResult struct {
+	Exchange string
+	Price    float64
+	Error    error
+}
+
 func main() {
 	exchanges := []Exchange{
 		Binance{},
