@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-type Exchane interface {
+type Exchange interface {
 	Name() string
 	GetPrice(symbol string) (float64, error)
 }
@@ -80,7 +80,7 @@ func (c Coinbase) GetPrice(symbol string) (float64, error) {
 }
 
 func main() {
-	exchanges := []Exchane{
+	exchanges := []Exchange{
 		Binance{},
 		Coinbase{},
 	}
