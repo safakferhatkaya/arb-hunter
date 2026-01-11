@@ -10,7 +10,6 @@ type Exchane interface {
 	GetPrice(symbol string) (float64, error)
 }
 
-// Implementation of binance
 type Binance struct{}
 
 func (b Binance) Name() string { return "Binance" }
@@ -20,8 +19,9 @@ func (b Binance) GetPrice(symbol string) (float64, error) {
 }
 
 type Coinbase struct{}
-func (k Coinbase) Name() string { return "Coinbase" }
-func (k Coinbase) GetPrice(symbol string) (float64, error) {
+
+func (c Coinbase) Name() string { return "Coinbase" }
+func (c Coinbase) GetPrice(symbol string) (float64, error) {
 	// Todo: Implement actual API call
 	return 98.500, nil
 }
