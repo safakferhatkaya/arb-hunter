@@ -129,14 +129,43 @@ func main() {
 		close(results) // Close the channel
 	}()
 
+	var finalQuotes []QuoteResult
+
 	// Consumer, until channel is closed, read results and prints
 	for res := range results {
 		if res.Error != nil {
 			fmt.Printf("[%s] Error fetching price: %v\n", res.Exchange, res.Error)
-		} else {
-			fmt.Printf("[%s] Price: $%.2f\n", res.Exchange, res.Price)
+			continue
+		}
+
+		finalQuotes = append(finalQuotes, res)
+	}
+
+	if len(finalQuotes) < 2 {
+		fmt.Println("Not enough quotes to compare.")
+		return
+	}
+
+	var minQuote, maxQuote QuoteResult
+	minQuote = finalQuotes[0]
+	maxQuote = finalQuotes[0]
+
+	for _, quote := range finalQuotes[1:] {
+		if quote.Price < minQuote.Price {
+			minQuote = quote
+		}
+		if quote.Price > maxQuote.Price {
+			maxQuote = quote
 		}
 	}
 
-	fmt.Println("-----------------------")
+	spread := (maxQuote.Price - minQuote.Price) / minQuote.Price * 100
+
+	fmt.Printf("Lowest Price: [%s] $%.2f\n", minQuote.Exchange, minQuote.Price)
+	fmt.Printf("Highest Price: [%s] $%.2f\n", maxQuote.Exchange, maxQuote.Price)
+	fmt.Println("\n=== ARBITRAGE REPORT ===")
+	fmt.Printf("Best Buy : %s ($%.2f)\n", minQuote.Exchange, minQuote.Price)
+	fmt.Printf("Best Sell: %s ($%.2f)\n", maxQuote.Exchange, maxQuote.Price)
+	fmt.Printf("Profit   : %.2f%%\n", spread)
+	fmt.Println("========================")
 }
